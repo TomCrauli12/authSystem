@@ -1,50 +1,49 @@
 <?php
 
-    require_once __DIR__ . '/../../database/BD.php';
+namespace App\Repositories;
 
-    class UserRepository{
+use App\Database\Database;
+use PDO;
 
-        private PDO $conn;
+class UserRepository{
 
-        public function __construct(){
+    private PDO $conn;
 
-            $this->conn = DB::getConnection();
+    public function __construct(){
 
-        }
-
-        public function findUserName(string $user_name): ?array{
-
-            $query = $this->conn->prepare("SELECT * FROM `users` WHERE `user_name` = ? LIMIT 1");
-
-            $query->execute([$user_name]);
-
-            $user = $query->fetch(PDO::FETCH_ASSOC);
-
-            return $user ?: null;
-        }
-
-        public function existsUserName(string $user_name): bool{
-
-            $query = $this->conn->prepare("SELECT COUNT(*) FROM `users` WHERE `user_name` = ?");
-
-            $query->execute([$user_name]);
-
-            return (int) $query->fetchColumn() > 0;
-
-        }
-
-        public function createUser(string $user_name, string $password, string $role): void{
-
-            $query = $this->conn->prepare("INSERT INTO `users` (`user_name`, `password`, `role`) VALUES (?, ?, ?)");
-
-            $query->execute([$user_name, $password, $role]);
-
-        }
-
-
-
-
-
+        $this->conn = Database::getConnection();
     }
+
+    public function findByUserName(string $userName): ?array{
+
+        $query = $this->conn->prepare("SELECT `id`, `user_name`, `password`, `role` FROM `users` WHERE `user_name` = ? LIMIT 1");
+
+        $query->execute([$userName]);
+
+        $user = $query->fetch();
+
+        return $user ?: null;
+    }
+
+    public function userNameExists(string $userName): bool{
+
+        $query = $this->conn->prepare("SELECT COUNT(*) FROM `users` WHERE `user_name` = ?");
+
+        $query->execute([$userName]);
+
+        return (int) $query->fetchColumn() > 0;
+    }
+
+    public function create(string $userName, string $password, string $role = 'user'): int{
+
+        $query = $this->conn->prepare("INSERT INTO `users` (`user_name`, `password`, `role`) VALUES (?, ?, ?)");
+
+        $query->execute([$userName, $password, $role]);
+
+        return (int) $this->conn->lastInsertId();
+    }
+}
+
+
 
 ?>

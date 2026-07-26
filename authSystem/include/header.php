@@ -1,42 +1,41 @@
 <?php
-require_once __DIR__ . '/../app/Core/Session.php';
+
+use App\Core\Csrf;
+use App\Core\Session;
+
+require_once dirname(__DIR__) . '/vendor/autoload.php';
 
 ?>
 
 <header>
     <div class="logo">
-        <a href="/pure-php-auth-system/public/index.php">
+        <a href="/authSystem/public/index.php">
             <h1>Auth-system</h1>
         </a>
     </div>
 
-    <div class="info">
+    <nav class="info">
         <ul>
-            <li><a href="">О нас</a></li>
-            <li><a href="">Отзывы</a></li>
-            <li><a href="">Связь с нами</a></li>
+            <li><a href="#">О нас</a></li>
+            <li><a href="#">Отзывы</a></li>
+            <li><a href="#">Связь с нами</a></li>
         </ul>
-    </div>
+    </nav>
 
     <div class="login">
-        <?php if (isset($_SESSION['id'])): ?>
-            <div class="prof">
-                <div class="user">
-                    <div class="ava">
-                        <img src="" alt="фото пользователя">
-                    </div>
+        <?php if (Session::has('id')): ?>
+            <div class="user">
+                <a href="/authSystem/app/Views/profile/user_profile.php">
+                    <?=htmlspecialchars(Session::get('user_name'), ENT_QUOTES, 'UTF-8')?>
+                </a>
 
-                    <div class="user_name">
-                        <a href="/pure-php-auth-system/app/Views/profile/user_profile.php"><?=htmlspecialchars(Session::get('user_name'), ENT_QUOTES, 'UTF-8') ?></a>
-
-                        <a href="/pure-php-auth-system/app/Controllers/authController.php?action=logout">Выйти</a>
-                    </div>
-                </div>
+                <form action="/authSystem/app/Controllers/AuthController.php?action=logout" method="post">
+                    <input type="hidden" name="_token" value="<?=htmlspecialchars(Csrf::token(), ENT_QUOTES, 'UTF-8')?>">
+                    <button class="link-button" type="submit">Выйти</button>
+                </form>
             </div>
         <?php else: ?>
-            <div class="aund">
-                <a href="/pure-php-auth-system/app/Views/auth/login.php">Войти / Зарегистрироваться</a>
-            </div>
+            <a href="/authSystem/app/Views/auth/login.php">Войти / Зарегистрироваться</a>
         <?php endif; ?>
     </div>
 </header>

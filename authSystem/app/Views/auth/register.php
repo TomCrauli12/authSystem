@@ -1,31 +1,49 @@
 <?php
 
-    require_once __DIR__ . '/../../Middleware/AuthMiddleware.php';
+use App\Core\Csrf;
+use App\Core\Session;
+use App\Middleware\AuthMiddleware;
 
-    AuthMiddleware::requireUser();
+require_once dirname(__DIR__, 3) . '/vendor/autoload.php';
+
+AuthMiddleware::requireGuest();
+
+$error = Session::getFlash('error');
+$oldUserName = Session::getFlash('old_user_name', '');
 
 ?>
 
-
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <link rel="stylesheet" href="../../../style/css/header.css">
+    <title>Регистрация</title>
 </head>
 <body>
-    <form action="../../../app/Controllers/registerController.php?action=register" method="post">
+    <?php require_once "../../../include/header.php"; ?>
 
-        <label for="user_name">Name</label>
-        <input type="text" name="user_name" id="">
+    <main class="auth-page">
+        <h1>Регистрация</h1>
 
-        <label for="password">password</label>
-        <input type="password" name="password" id="">
+        <?php if ($error): ?>
+            <div class="message error"><?=$error?></div>
+        <?php endif; ?>
 
-        <button>Создать аккаунт</button>
-    </form>
-    <a href="../auth/login.php">Войти</a>
+        <form action="../../Controllers/RegisterController.php?action=register" method="post">
+            <input type="hidden" name="_token" value="<?=htmlspecialchars(Csrf::token(), ENT_QUOTES, 'UTF-8')?>">
+
+            <label for="user_name">Имя пользователя</label>
+            <input type="text" name="user_name" id="user_name" value="<?=htmlspecialchars($oldUserName, ENT_QUOTES, 'UTF-8')?>" maxlength="100" autocomplete="username">
+
+            <label for="password">Пароль</label>
+            <input type="password" name="password" id="password" minlength="2" autocomplete="new-password">
+
+            <button type="submit">Создать аккаунт</button>
+        </form>
+
+        <a href="login.php">Войти</a>
+    </main>
 </body>
 </html>
