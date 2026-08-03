@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Core;
 
 class Validator{
@@ -43,6 +45,18 @@ class Validator{
         return $this;
     }
 
+    public function same(string $field, string $otherField, string $message): self{
+
+        $value = $this->value($field);
+        $otherValue = $this->value($otherField);
+
+        if ($value !== '' && $otherValue !== '' && !hash_equals($otherValue, $value)){
+            $this->errors[$field][] = $message;
+        }
+
+        return $this;
+    }
+
     public function fails(): bool{
 
         return !empty($this->errors);
@@ -80,5 +94,3 @@ class Validator{
         return is_string($value) ? trim($value) : '';
     }
 }
-
-?>

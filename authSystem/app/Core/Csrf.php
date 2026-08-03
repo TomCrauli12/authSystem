@@ -33,7 +33,3 @@ class Csrf{
         Session::set(self::TOKEN_KEY, bin2hex(random_bytes(32)));
     }
 }
-
-
-
-?>

@@ -23,13 +23,17 @@ class ComposerStaticInit215287761481aae0b8fece4f8bc4f69d
     public static $classMap = array (
         'App\\Core\\Csrf' => __DIR__ . '/../..' . '/app/Core/Csrf.php',
         'App\\Core\\Environment' => __DIR__ . '/../..' . '/app/Core/Environment.php',
+        'App\\Core\\RememberToken' => __DIR__ . '/../..' . '/app/Core/RememberToken.php',
         'App\\Core\\Session' => __DIR__ . '/../..' . '/app/Core/Session.php',
         'App\\Core\\Validator' => __DIR__ . '/../..' . '/app/Core/Validator.php',
         'App\\Database\\Database' => __DIR__ . '/../..' . '/app/Database/Database.php',
         'App\\Middleware\\AuthMiddleware' => __DIR__ . '/../..' . '/app/Middleware/AuthMiddleware.php',
+        'App\\Repositories\\RememberTokenRepository' => __DIR__ . '/../..' . '/app/Repositories/RememberTokenRepository.php',
         'App\\Repositories\\UserRepository' => __DIR__ . '/../..' . '/app/Repositories/UserRepository.php',
         'App\\Services\\AuthService' => __DIR__ . '/../..' . '/app/Services/AuthService.php',
+        'App\\Services\\ProfileService' => __DIR__ . '/../..' . '/app/Services/ProfileService.php',
         'App\\Services\\RegisterService' => __DIR__ . '/../..' . '/app/Services/RegisterService.php',
+        'App\\Services\\RememberMeService' => __DIR__ . '/../..' . '/app/Services/RememberMeService.php',
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
     );
 

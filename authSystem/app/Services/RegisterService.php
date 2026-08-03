@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
 use App\Repositories\UserRepository;
@@ -17,14 +19,10 @@ class RegisterService{
             return false;
         }
 
-        $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+        $passwordHash = password_hash($password, PASSWORD_ARGON2ID);
 
         $this->userRepository->create($userName, $passwordHash);
 
         return true;
     }
 }
-
-
-
-?>

@@ -1,3 +1,15 @@
+<?php
+
+declare(strict_types=1);
+
+use App\Middleware\AuthMiddleware;
+
+require_once "../vendor/autoload.php";
+
+AuthMiddleware::restoreRememberedUser();
+
+?>
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -9,6 +21,8 @@
 <body>
     <?php require_once "../include/header.php"; ?>
 
-        <h1>Главная страница</h1>
+    <main class="home-page">
+        <h2>Главная страница</h2>
+    </main>
 </body>
 </html>

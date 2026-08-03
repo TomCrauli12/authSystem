@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Core\Csrf;
 use App\Core\Session;
 use App\Core\Validator;
@@ -15,7 +17,9 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 if (!Csrf::verify($_POST['_token'] ?? null)) {
-    Session::setFlash('error', 'Сессия устарела. Обновите страницу и попробуйте еще раз');
+    Session::setFlash('errors', [
+        'csrf' => ['Сессия устарела. Обновите страницу и попробуйте еще раз'],
+    ]);
     header('Location: ../Views/auth/login.php');
     exit;
 }
@@ -23,6 +27,7 @@ if (!Csrf::verify($_POST['_token'] ?? null)) {
 if ($action === 'login') {
     $userName = is_string($_POST['user_name'] ?? null) ? trim($_POST['user_name']) : '';
     $password = is_string($_POST['password'] ?? null) ? $_POST['password'] : '';
+    $rememberMe = ($_POST['remember_me'] ?? '') === '1';
 
     $validator = new Validator([
         'user_name' => $userName,
@@ -31,11 +36,14 @@ if ($action === 'login') {
 
     $validator
         ->required('user_name', 'Введите имя пользователя')
-        ->required('password', 'Введите пароль');
+        ->max('user_name', 100, 'Имя пользователя должно быть максимум 100 символов')
+        ->required('password', 'Введите пароль')
+        ->max('password', 255, 'Пароль должен быть максимум 255 символов');
 
     if ($validator->fails()) {
-        Session::setFlash('error', $validator->firstError());
+        Session::setFlash('errors', $validator->errors());
         Session::setFlash('old_user_name', $userName);
+        Session::setFlash('old_remember_me', $rememberMe);
 
         header('Location: ../Views/auth/login.php');
         exit;
@@ -43,18 +51,18 @@ if ($action === 'login') {
 
     $authService = new AuthService();
 
-    if (!$authService->login($userName, $password)) {
-
-        Session::setFlash('error', 'Неверное имя пользователя или пароль');
-
+    if (!$authService->login($userName, $password, $rememberMe)) {
+        Session::setFlash('errors', [
+            'auth' => ['Неверное имя пользователя или пароль'],
+        ]);
         Session::setFlash('old_user_name', $userName);
+        Session::setFlash('old_remember_me', $rememberMe);
 
         header('Location: ../Views/auth/login.php');
         exit;
     }
 
     header('Location: ../../public/index.php');
-
     exit;
 }
 
@@ -68,7 +76,3 @@ if ($action === 'logout') {
 
 header('Location: ../Views/auth/login.php');
 exit;
-
-
-
-?>
